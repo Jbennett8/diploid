@@ -18,18 +18,18 @@ for trees in {1..2}
 do
   if (( trees == 2 ))
   then
-    sed -i '6s/.*/'$treeB'/' MCcoal.ctl
+    sed -i "6 c $treeB" MCcoal.ctl
     symmetry='B'
   fi
   for loci in {1..3}
   do
     if (( loci == 2 ))
     then
-      sed -i '9s/.*/loci&length=50 500/' MCcoal.ctl
+      sed -i '9s/[0-9]\{2,3\}/50 /' MCcoal.ctl
       loci='50L'
     elif (( loci == 3 ))
     then
-      sed -i '9s/.*/loci&length=250 500/' MCcoal.ctl
+      sed -i '9s/[0-9]\{2,3\}/250 /' MCcoal.ctl
       loci='250L'
     fi
     for replicates in {1..100}
@@ -39,11 +39,11 @@ do
       do
         if (( rates == 2 )) && (( trees == 2 ))
         then
-          sed -i '6s/.*/'$treeBlow'/' MCcoal.ctl
+          sed -i "6 c $treeBlow" MCcoal.ctl
           rate='low'
         elif (( rates == 2 )) && (( trees == 1 ))
         then
-          sed -i '6s/.*/'$treeAlow'/' MCcoal.ctl
+          sed -i "6 c treeAlow" MCcoal.ctl
           rate='low'
         else
           rate='high'
@@ -55,7 +55,7 @@ do
             sed -i '5s/1/2/g' MCcoal.ctl
             seq=2
           fi
-          sed -i '2s/.*.txt/''seqfile = '$symmetry'-'$loci'-'$number'-'$rate'-'$seq''.txt 0'/' MCcoal.ctl
+          sed -i "2 c seqfile = $symmetry-$loci-$number-$rate-$seq.txt 0" MCcoal.ctl
           /tmp/MCcoal MCcoal.ctl
         done
       done
