@@ -25,11 +25,11 @@ do
   do
     if (( loci == 2 ))
     then
-      sed -i '9s/[0-9]\{2,3\}/50 /' MCcoal.ctl
+      sed -i '9s/[0-9]\{2,3\}/50/' MCcoal.ctl
       loci='50L'
     elif (( loci == 3 ))
     then
-      sed -i '9s/[0-9]\{2,3\}/250 /' MCcoal.ctl
+      sed -i '9s/[0-9]\{2,3\}/250/' MCcoal.ctl
       loci='250L'
     fi
     for replicates in {1..100}
@@ -43,7 +43,7 @@ do
           rate='low'
         elif (( rates == 2 )) && (( trees == 1 ))
         then
-          sed -i "6 c treeAlow" MCcoal.ctl
+          sed -i "6 c $treeAlow" MCcoal.ctl
           rate='low'
         else
           rate='high'
