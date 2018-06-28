@@ -23,7 +23,11 @@ do
   fi
   for loci in {1..3}
   do
-    if (( loci == 2 ))
+    if (( loci == 1 ))
+    then
+      sed -i '9s/[0-9]\{\2,3\}/10/' MCcoal.ctl
+      loci='10L'
+    elif (( loci == 2 ))
     then
       sed -i '9s/[0-9]\{2,3\}/50/' MCcoal.ctl
       loci='50L'
@@ -50,9 +54,13 @@ do
         fi
         for sequences in {1..2}
         do
-	  if (( sequences == 2 ))
+	  if (( sequences == 1 ))
           then
-            sed -i '5s/1/2/g' MCcoal.ctl
+            sed -i '5 c1 1 1 1 1 1 1 1' MCcoal.ctl
+            seq=1
+          elif (( sequences == 2 ))
+          then
+            sed -i '5 c2 2 2 2 2 2 2 2' MCcoal.ctl
             seq=2
           fi
           sed -i "2 c seqfile = $symmetry-$loci-$number-$rate-$seq.txt 0" MCcoal.ctl
