@@ -73,7 +73,7 @@ do
             seq=2
           fi
           sed -i "2 c seqfile = $symmetry-$loci-$rate-$seq-$number.txt 0" MCcoal.ctl
-          /tmp/MCcoal MCcoal.ctl
+          MCcoal MCcoal.ctl
           mv "$symmetry-$loci-$rate-$seq-$number.txt" "$symmetry/$loci/$rate/$seq" #comment this out to put everything in one directory 
         done
       done
