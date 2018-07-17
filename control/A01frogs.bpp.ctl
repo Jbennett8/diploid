@@ -1,5 +1,5 @@
 seed = -1
-seqfile = ../frogs.txt
+seqfile = ../phasedfulldata.phy
 Imapfile = ../frogs.Imap.txt
 outfile = out.txt
 mcmcfile = mcmc.txt
