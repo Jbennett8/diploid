@@ -15,6 +15,7 @@ treeAlow='(((((((A #0.001, B #0.001):0.001 #0.001, C #0.001):0.0015 #0.001, D #0
 treeB='(((A #0.01, B #0.01):0.01 #0.01,(C #0.01, D #0.01):0.018 #0.01):0.02 #0.01,((E #0.01, F #0.01):0.01 #0.01, (G #0.01, H #0.01):0.018 #0.01):0.02 #0.01):0.03 #0.01;'
 treeBlow='(((A #0.001, B #0.001):0.001 #0.001,(C #0.001, D #0.001):0.0018 #0.001):0.002 #0.001,((E #0.001, F #0.001):0.001 #0.001, (G #0.001, H #0.001):0.0018 #0.001):0.002 #0.001):0.003 #0.001;'
 
+MCcounter=1
 
 for trees in {1..2}
 do
@@ -29,7 +30,7 @@ do
   do
     if (( loci == 1 ))
     then
-      sed -i '9s/[0-9]\{\2,3\}/10/' MCcoal.ctl
+      sed -i '9s/[0-9]\{2,3\}/10/' MCcoal.ctl
       loci='10L'
     elif (( loci == 2 ))
     then
@@ -43,7 +44,7 @@ do
     for replicates in {1..100}
     do
       number=$replicates
-      for rates in {1..2}                   # possibly redundant and lazy programming here, but it makes sure the settings are correct
+      for rates in {1..2}
       do
         if (( rates == 2 )) && (( trees == 2 ))
         then
@@ -73,6 +74,10 @@ do
             seq=2
           fi
           sed -i "2 c seqfile = $symmetry-$loci-$rate-$seq-$number.txt 0" MCcoal.ctl
+          sed -i "1s/[0-9]\+/$RANDOM/" MCcoal.ctl
+          sleep 1
+          cat MCcoal.ctl > ../../../MCcoalfiles/MCcoal$MCcounter.ctl
+          ((MCcounter++))
           /tmp/MCcoal MCcoal.ctl
           mv "$symmetry-$loci-$rate-$seq-$number.txt" "$symmetry/$loci/$rate/$seq" #comment this out to put everything in one directory 
         done
