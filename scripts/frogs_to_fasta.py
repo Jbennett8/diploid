@@ -1,7 +1,7 @@
 #! /usr/bin/python
 '''
-Converts multi-locus sequence files created by MCcoal to fasta format
-usage: ./bpp_to_fasta file.phy
+Converts format similar to frogs.phy bpp example data to fasta format
+usage: ./frogs_to_fasta file.phy
 '''
 
 import sys
