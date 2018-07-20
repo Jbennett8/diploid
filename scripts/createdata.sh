@@ -6,7 +6,6 @@ symmetry='A'  #A=symmetrical B=unsymmetrical
 loci='10L'
 number=1      #replicates
 rate='high'   #low=(tau,theta) * 0.1
-seq=1
 
 treeA='(((((((A #0.01, B #0.01):0.01 #0.01, C #0.01):0.015 #0.01, D #0.01):0.02 #0.01, E #0.01):0.025 #0.01, F #0.01):0.03 #0.01, G #0.01):0.035 #0.01, H #0.01):0.04 #0.01;'
 
@@ -62,25 +61,13 @@ do
           sed -i "6 c $treeB" MCcoal.ctl
           rate='high'
         fi
-        for sequences in {1..2}
-        do
-	  if (( sequences == 1 ))
-          then
-            sed -i '5 c1 1 1 1 1 1 1 1' MCcoal.ctl
-            seq=1
-          elif (( sequences == 2 ))
-          then
-            sed -i '5 c2 2 2 2 2 2 2 2' MCcoal.ctl
-            seq=2
-          fi
-          sed -i "2 c seqfile = $symmetry-$loci-$rate-$seq-$number.txt 0" MCcoal.ctl
-          sed -i "1s/[0-9]\+/$RANDOM/" MCcoal.ctl
-          sleep 1
-          cat MCcoal.ctl > ../../../MCcoalfiles/MCcoal$MCcounter.ctl
-          ((MCcounter++))
-          /tmp/MCcoal MCcoal.ctl
-          mv "$symmetry-$loci-$rate-$seq-$number.txt" "$symmetry/$loci/$rate/$seq" #comment this out to put everything in one directory 
-        done
+        sed -i "2 c seqfile = $symmetry-$loci-$rate-$number.txt 0" MCcoal.ctl
+        sed -i "1s/[0-9]\+/$RANDOM/" MCcoal.ctl
+        sleep 1
+        cat MCcoal.ctl > ../../../MCcoalfiles/MCcoal$MCcounter.ctl
+        ((MCcounter++))
+        /tmp/MCcoal MCcoal.ctl
+        mv "$symmetry-$loci-$rate-$number.txt" "$symmetry/$loci/$rate" #comment this out to put everything in one directory 
       done
     done
   done
