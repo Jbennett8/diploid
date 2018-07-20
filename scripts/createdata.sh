@@ -66,7 +66,7 @@ do
         sleep 1
         cat MCcoal.ctl > ../../../MCcoalfiles/MCcoal$MCcounter.ctl
         ((MCcounter++))
-        /tmp/MCcoal MCcoal.ctl
+        ./MCcoal.exe MCcoal.ctl
         mv "$symmetry-$loci-$rate-$number.txt" "$symmetry/$loci/$rate" #comment this out to put everything in one directory 
       done
     done
