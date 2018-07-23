@@ -1,4 +1,3 @@
-#!/bin/bash
 #script to create the necessary 2400 datasets for later bpp analysis
 #run createdirs.sh first, or comment out the line moving each file into a directory if you want everything in one place
 
@@ -63,11 +62,14 @@ do
         fi
         sed -i "2 c seqfile = $symmetry-$loci-$rate-$number.txt 0" MCcoal.ctl
         sed -i "1s/[0-9]\+/$RANDOM/" MCcoal.ctl
-        sleep 1
-        cat MCcoal.ctl > ../../../MCcoalfiles/MCcoal$MCcounter.ctl
-        ((MCcounter++))
+        sleep .1
         ./MCcoal.exe MCcoal.ctl
         mv "$symmetry-$loci-$rate-$number.txt" "$symmetry/$loci/$rate" #comment this out to put everything in one directory 
+        sed -i "5 c 2 2 2 2 2 2 2 2" MCcoal.ctl
+        sed -i "8 c diploid = 0 0 0 0 0 0 0 0" MCcoal.ctl
+        sed -i "2 c seqfile = $symmetry-$loci-$rate-$number-full.txt 0" MCcoal.ctl
+        ./MCcoal.exe MCcoal.ctl
+        mv "$symmetry-$loci-$rate-$number-full.txt" "$symmetry/$loci/$rate"
       done
     done
   done
