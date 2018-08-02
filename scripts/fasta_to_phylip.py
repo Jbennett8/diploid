@@ -29,7 +29,7 @@ for i in range(len(seq_names)):
 	name_size.append(len(seq_names[i]))
 f2.write(str(len(seq_names)) + ' ' + str(len(phylip[0])) + '\n')
 for i in range(len(seq_names)):
-	f2.write(str(seq_names[i]) + (max(name_size) - len(seq_names[i]) +1)*' ' + str(phylip[i])+ '\n')
+	f2.write(str(seq_names[i]) + (max(name_size) - len(seq_names[i]) +1)*' ' + '    ' + str(phylip[i])+ '\n')
 f2.close()
 f.close()
 
