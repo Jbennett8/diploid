@@ -62,22 +62,43 @@ do
       sed -i "2 c seqfile = $loci-$rate-$nrep.phy 0" MCcoal.ctl
       for niter in {1..3}
       do
-        if (( niter == 1 ))
+        if (( niter == 1 )) && [ $loci = "10L" ]
         then
-          iter='15'
+          iter='75'
+          MCcoal.exe MCcoal.ctl
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
+        elif (( niter == 2 )) && [ $loci = "10L" ]
+        then
+          iter='200'
+          MCcoal.exe MCcoal.ctl
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
+        elif (( niter == 3 )) && [ $loci = "10L" ]
+        then
+          iter='500'
+          MCcoal.exe MCcoal.ctl
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
+        elif (( niter == 1 ))
+        then
+          iter='30'
           MCcoal.exe MCcoal.ctl
           cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
           mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
           mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
         elif (( niter == 2 ))
         then
-          iter='40'
+          iter='80'
           MCcoal.exe MCcoal.ctl
           cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
           mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
           mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
         else
-          iter='100'
+          iter='200'
           MCcoal.exe MCcoal.ctl
           cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
           mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
