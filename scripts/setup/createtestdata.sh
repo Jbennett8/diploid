@@ -1,12 +1,9 @@
-treeA='(((((((A #0.01, B #0.01):0.01 #0.01, C #0.01):0.015 #0.01, D #0.01):0.02 #0.01, E #0.01):0.025 #0.01, F #0.01):0.03 #0.01, G #0.01):0.035 #0.01, H #0.01):0.04 #0.01;'
+treeA='(((((((A #0.01, B #0.01):0.01 #0.01, C #0.01):0.012 #0.01, D #0.01):0.02 #0.01, E #0.01):0.025 #0.01, F #0.01):0.03 #0.01, G #0.01):0.032 #0.01, H #0.01):0.04 #0.01;'
 
-treeAlow='(((((((A #0.001, B #0.001):0.001 #0.001, C #0.001):0.0015 #0.001, D #0.001):0.002 #0.001, E #0.001):0.0025 #0.001, F #0.001):0.003 #0.001, G #0.001):0.0035 #0.001, H #0.001):0.004 #0.001;'
+treeAlow='(((((((A #0.001, B #0.001):0.001 #0.001, C #0.001):0.0012 #0.001, D #0.001):0.002 #0.001, E #0.001):0.0025 #0.001, F #0.001):0.003 #0.001, G #0.001):0.0032 #0.001, H #0.001):0.004 #0.001;'
 
-Seeds=(23498 11884 25259 533 23126 26411 16251 14814 20214 1996 7226 20679)
-Seedcounter=0
 loci="10L"
 rate="low"
-rep="1"
 iter="15"
 
 if [ "$1" = "diploidoption" ]
@@ -59,46 +56,32 @@ do
       rate="high"
       sed -i "6 c $treeA" MCcoal.ctl
     fi
+    sed -i "1 c seed = $RANDOM" MCcoal.ctl
     for nrep in {1..2}
     do
-      if (( Seedcounter == 12 ))
-      then
-        Seedcounter=0
-      fi
-      next=${Seeds[$Seedcounter]}
-      ((Seedcounter++))
-      if (( nrep == 1 ))
-      then
-        rep="1"
-        sed -i "1 c seed = $next" MCcoal.ctl
-        sed -i "2 c seqfile = $loci-$rate-$rep.phy 0" MCcoal.ctl
-      else
-        rep="2"
-        sed -i "1 c seed = $next" MCcoal.ctl
-        sed -i "2 c seqfile = $loci-$rate-$rep.phy 0" MCcoal.ctl
-      fi
+      sed -i "2 c seqfile = $loci-$rate-$nrep.phy 0" MCcoal.ctl
       for niter in {1..3}
       do
         if (( niter == 1 ))
         then
           iter='15'
           MCcoal.exe MCcoal.ctl
-          cp MCcoal.ctl "$method/$loci/$rate/$rep/$iter/MCcoal.ctl"
-          mv "Imap.txt" "$method/$loci/$rate/$rep/$iter/Imap.txt"
-          mv "$loci-$rate-$rep.phy" "$method/$loci/$rate/$rep/$iter"
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
         elif (( niter == 2 ))
         then
           iter='40'
           MCcoal.exe MCcoal.ctl
-          cp MCcoal.ctl "$method/$loci/$rate/$rep/$iter/MCcoal.ctl"
-          mv "Imap.txt" "$method/$loci/$rate/$rep/$iter/Imap.txt"
-          mv "$loci-$rate-$rep.phy" "$method/$loci/$rate/$rep/$iter"
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
         else
           iter='100'
           MCcoal.exe MCcoal.ctl
-          cp MCcoal.ctl "$method/$loci/$rate/$rep/$iter/MCcoal.ctl"
-          mv "Imap.txt" "$method/$loci/$rate/$rep/$iter/Imap.txt"
-          mv "$loci-$rate-$rep.phy" "$method/$loci/$rate/$rep/$iter"
+          cp MCcoal.ctl "$method/$loci/$rate/$nrep/$iter/MCcoal.ctl"
+          mv "Imap.txt" "$method/$loci/$rate/$nrep/$iter/Imap.txt"
+          mv "$loci-$rate-$nrep.phy" "$method/$loci/$rate/$nrep/$iter"
         fi
       done 
     done
