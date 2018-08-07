@@ -4,32 +4,37 @@ import subprocess
 import os
 import re
 
-basedir='/SAN/yanglab/abacus/jeremy/testruns'
+basedir=os.getcwd()
 
-analyses = {'10L-low-15' : [],
-'10L-low-40' : [],
-'10L-low-100' : [],
-'10L-high-15' : [],
-'10L-high-40' : [],
-'10L-high-100' : [],
-'50L-low-15' : [],
-'50L-low-40' : [],
-'50L-low-100' : [],
-'50L-high-15' : [],
-'50L-high-40' : [],
-'50L-high-100' : [],
-'250L-low-15' : [],
-'250L-low-40' : [],
-'250L-low-100' : [],
-'250L-high-15' : [],
-'250L-high-40' : [],
-'250L-high-100' : [],}
+analyses = {'10L-low-75' : [],
+'10L-low-200' : [],
+'10L-low-500' : [],
+'10L-high-75' : [],
+'10L-high-200' : [],
+'10L-high-500' : [],
+'50L-low-30' : [],
+'50L-low-80' : [],
+'50L-low-200' : [],
+'50L-high-30' : [],
+'50L-high-80' : [],
+'50L-high-200' : [],
+'250L-low-30' : [],
+'250L-low-80' : [],
+'250L-low-200' : [],
+'250L-high-30' : [],
+'250L-high-80' : [],
+'250L-high-200' : [],}
 
 for method in "fulldata diploidoption random".split():
   for loci in "10L 50L 250L".split():
     for rate in "low high".split():
       for num in "1 2".split():
-        for iter in "15 40 100".split():
+        for iter in "30 80 200".split():
+          if loci=="10L":
+            iter = int(iter)
+            iter*=2.5
+            iter = int(iter)
+            iter = str(iter)
           dir = basedir+'/'+method+'/'+loci+'/'+rate+'/'+num+'/'+iter
           os.chdir(dir)
           file = loci+'-'+rate+'-'+num+'-'+iter+"-out.txt"

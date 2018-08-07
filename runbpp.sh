@@ -6,16 +6,16 @@ num="1"
 iter="15"
 
 
-cp scripts/qsub/A01.bpp.ctl
-cp scripts/qsub/run.txt
+cp scripts/qsub/A01.bpp.ctl A01.bpp.ctl
+cp scripts/qsub/run.txt run.txt
 if [ "$1" = "fulldata" ]
 then
   method="fulldata"
   echo "Using fulldata method"
   sed -i "10 c 2 2 2 2 2 2 2 2" "$basedir/A01.bpp.ctl"
   sed -i "12 c diploid = 0 0 0 0 0 0 0 0" "$basedir/A01.bpp.ctl"
-  sed -i "6 c \#$ $basedir/output/fulldata" run.txt
-  sed -i "7 c \#$ $basedir/error/fulldata" run.txt
+  sed -i "6 c \#$ -o $basedir/output/fulldata" run.txt
+  sed -i "7 c \#$ -e $basedir/error/fulldata" run.txt
   for i in {1..3}
   do
     if (( i == 1 ))

@@ -1,3 +1,4 @@
+#! /bin/bash
 #$ -S /bin/bash
 #$ -l h_vmem=2G
 #$ -l h_rt=10:0:0
@@ -23,7 +24,7 @@ function diploidoption {
   echo "Populating folders with MCcoal simulated data"
   cp scripts/setup/MCcoal.exe MCcoal.exe
   cp scripts/setup/MCcoal.ctl MCcoal.ctl
-  scripts/setup/./createtestdata.sh 
+  scripts/setup/./createtestdata.sh diploidoption
   rm MCcoal.exe
   rm MCcoal.ctl
 }
@@ -65,6 +66,7 @@ then
   scripts/setup/./createtestdata.sh diploidoption
   scripts/setup/./createtestdata.sh PHASED
   scripts/setup/./createtestdata.sh random
+#  find PHASED/ -type d -exec chmod 755 {} \;
   echo "Phasing using PHASE and creating haploid consensus sequences"
   scripts/random/./randomphase.py
   scripts/PHASE/./use_PHASE.sh

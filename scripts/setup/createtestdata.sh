@@ -2,9 +2,6 @@ treeA='(((((((A #0.01, B #0.01):0.01 #0.01, C #0.01):0.012 #0.01, D #0.01):0.02 
 
 treeAlow='(((((((A #0.001, B #0.001):0.001 #0.001, C #0.001):0.0012 #0.001, D #0.001):0.002 #0.001, E #0.001):0.0025 #0.001, F #0.001):0.003 #0.001, G #0.001):0.0032 #0.001, H #0.001):0.004 #0.001;'
 
-loci="10L"
-rate="low"
-iter="15"
 
 if [ "$1" = "diploidoption" ]
 then
@@ -31,6 +28,14 @@ else
   exit 1
 fi
 
+Seedcounter=0
+declare -a seeds
+
+for i in range{0..17}
+do
+  seeds[i]=$RANDOM
+done
+
 
 for nloci in {1..3}
 do
@@ -56,7 +61,11 @@ do
       rate="high"
       sed -i "6 c $treeA" MCcoal.ctl
     fi
-    sed -i "1 c seed = $RANDOM" MCcoal.ctl
+    if (( Seedcounter == 17 ))
+    then
+      Seedcounter = 0
+    fi
+    sed -i "1 c seed = ${seeds[Seedcounter]}" MCcoal.ctl
     for nrep in {1..2}
     do
       sed -i "2 c seqfile = $loci-$rate-$nrep.phy 0" MCcoal.ctl
