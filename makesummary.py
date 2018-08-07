@@ -62,11 +62,16 @@ f.write("\n")
 
 for loci in "10L 50L 250L".split():
   for rate in "low high".split():
-    for iter in "15 40 100".split():
+    for iter in "30 80 200".split():
+       if loci=="10L":
+         iter = int(iter)
+         iter*=2.5
+         iter = int(iter)
+         iter = str(iter)
        key = loci+'-'+rate+'-'+iter
        line = analyses[key]
        f.write(key+": ")
-       longest = len("250L-high-100")
+       longest = len("250L-high-200")
        if len(key) < longest: #make it nice
          diff = longest-len(key)
          for i in range(diff):
