@@ -19,7 +19,8 @@ do
         for iter in {75,200,500}
         do
           seqname=$loci-$rate-$num.phy
-          sed -i "8 c cd $basedir/PHASED/$loci/$rate/$num/$iter" "$scriptpath/phasing.sh"
+          sed -i "8 c #\$ -N phasing.$loci.$rate.$num.$iter" "$scriptpath/phasing.sh"
+          sed -i "9 c cd $basedir/PHASED/$loci/$rate/$num/$iter" "$scriptpath/phasing.sh"
           sed -i "11 c \"$scriptpath/./bpp_to_fasta.py\" \"$seqname\"" "$scriptpath/phasing.sh"
           sed -i "15 c \ \ $scriptpath/./seqphase1.pl -1 $loci-$rate-$num--locus\$i.fas -p phase\$i" "$scriptpath/phasing.sh"
           sed -i "16 c \ \ $scriptpath/./PHASE -q0 -p0 phase\$i.inp phase\$i.out" "$scriptpath/phasing.sh"
@@ -29,12 +30,14 @@ do
           sed -i "29 c \ \ cat locus\$j.fas.phylip <(echo) >> $loci-$rate-$num-phased.phy" "$scriptpath/phasing.sh"
           sed -i "28 c \ \ $scriptpath/./fasta_to_phylip.py locus\$j.fas" "$scriptpath/phasing.sh"
           qsub "$scriptpath/phasing.sh"
+	  # cp $scriptpath/phasing.sh $HOME/TOMAS/files/phasing.$loci.$rate.$num.$iter
         done
       else
         for iter in {30,80,200}
         do
           seqname=$loci-$rate-$num.phy
-          sed -i "8 c cd $basedir/PHASED/$loci/$rate/$num/$iter" "$scriptpath/phasing.sh"
+          sed -i "8 c #\$ -N phasing.$loci.$rate.$num.$iter" "$scriptpath/phasing.sh"
+          sed -i "9 c cd $basedir/PHASED/$loci/$rate/$num/$iter" "$scriptpath/phasing.sh"
           sed -i "11 c \"$scriptpath/./bpp_to_fasta.py\" \"$seqname\"" "$scriptpath/phasing.sh"
           sed -i "15 c \ \ $scriptpath/./seqphase1.pl -1 $loci-$rate-$num--locus\$i.fas -p phase\$i" "$scriptpath/phasing.sh"
           sed -i "16 c \ \ $scriptpath/./PHASE -q0 -p0 phase\$i.inp phase\$i.out" "$scriptpath/phasing.sh"
@@ -44,7 +47,7 @@ do
           sed -i "29 c \ \ cat locus\$j.fas.phylip <(echo) >> $loci-$rate-$num-phased.phy" "$scriptpath/phasing.sh"
           sed -i "28 c \ \ $scriptpath/./fasta_to_phylip.py locus\$j.fas" "$scriptpath/phasing.sh"
           qsub "$scriptpath/phasing.sh"
-          sleep 1
+	  # cp $scriptpath/phasing.sh $HOME/TOMAS/files/phasing.$loci.$rate.$num.$iter
         done
       fi
     done

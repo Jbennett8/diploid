@@ -5,8 +5,8 @@
 #$ -e /SAN/yanglab/abacus/jeremy/git/diploid/error/PHASED/phasing
 #$ -o /SAN/yanglab/abacus/jeremy/git/diploid/output/PHASED/phasing
 #$ -cwd 
+#$ -N phasing.250L.high.2.200
 cd /SAN/yanglab/abacus/jeremy/git/diploid/PHASED/250L/high/2/200
-
 
 "/SAN/yanglab/abacus/jeremy/git/diploid/scripts/PHASE/./bpp_to_fasta.py" "250L-high-2.phy"
 

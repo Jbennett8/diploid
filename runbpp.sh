@@ -184,7 +184,6 @@ then
       done
     done
   done
-
 elif [ "$1" = "diploidoption" ]
 then
   method="diploidoption"

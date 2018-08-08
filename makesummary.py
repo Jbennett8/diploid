@@ -25,7 +25,7 @@ analyses = {'10L-low-75' : [],
 '250L-high-80' : [],
 '250L-high-200' : [],}
 
-for method in "fulldata diploidoption random".split():
+for method in "fulldata diploidoption PHASED random".split():
   for loci in "10L 50L 250L".split():
     for rate in "low high".split():
       for num in "1 2".split():
