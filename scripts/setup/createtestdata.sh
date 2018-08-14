@@ -2,7 +2,6 @@ treeA='(((((((A #0.01, B #0.01):0.01 #0.01, C #0.01):0.012 #0.01, D #0.01):0.02 
 
 treeAlow='(((((((A #0.001, B #0.001):0.001 #0.001, C #0.001):0.0012 #0.001, D #0.001):0.002 #0.001, E #0.001):0.0025 #0.001, F #0.001):0.003 #0.001, G #0.001):0.0032 #0.001, H #0.001):0.004 #0.001;'
 
-seed=$RANDOM
 
 if [ "$1" = "diploidoption" ]
 then
@@ -52,7 +51,6 @@ do
     else
       rate="high"
       sed -i "6 c $treeA" MCcoal.ctl
-    sed -i "1 c seed = $seed" MCcoal.ctl
     fi
     for nrep in {1..2}
     do

@@ -1,372 +1,82 @@
+bppprogram="/SAN/yanglab/abacus/jeremy/bpp4.0/bpp.exe" #modify this to match the location of the bpp program on host pc
 basedir="$PWD"
-bppdir="/SAN/yanglab/abacus/jeremy/bpp4.0"
-loci="10L"
-rate="low"
-num="1"
-iter="15"
 
+scripts=scripts/qsub
+bppctl=$scripts/A01.bpp.ctl
+submit=$scripts/run.txt
 
-cp scripts/qsub/A01.bpp.ctl A01.bpp.ctl
-cp scripts/qsub/run.txt run.txt
-if [ "$1" = "fulldata" ]
-then
-  method="fulldata"
-  echo "Using fulldata method"
-  sed -i "10 c 2 2 2 2 2 2 2 2" "$basedir/A01.bpp.ctl"
-  sed -i "12 c diploid = 0 0 0 0 0 0 0 0" "$basedir/A01.bpp.ctl"
-  sed -i "6 c \#$ -o $basedir/output/fulldata" run.txt
-  sed -i "7 c \#$ -e $basedir/error/fulldata" run.txt
-  for i in {1..3}
+methodlist="fulldata diploidoption PHASED random"
+locilist="10 50 250"
+
+for tree in {"U","B"}
+do
+  for method in $methodlist
   do
-    if (( i == 1 ))
+    if [ "$method" = "fulldata" ]
     then
-      loci="10L"
-      sed -i "14 c nloci = 10" "$basedir/A01.bpp.ctl"
-    elif (( $i == 2 ))
+      sed -i "10 c 2 2 2 2 2 2 2 2" $bppctl
+      sed -i "12 c diploid = 0 0 0 0 0 0 0 0" $bppctl
+      sed -i "6 c #\$ -o $basedir/output/fulldata" $submit
+      sed -i "7 c #\$ -e $basedir/error/fulldata" $submit
+    elif [ "$method" = "diploidoption" ]
     then
-      loci="50L"
-      sed -i "14 c nloci = 50" "$basedir/A01.bpp.ctl"
+      sed -i "10 c 1 1 1 1 1 1 1 1" $bppctl
+      sed -i "12 c diploid = 1 1 1 1 1 1 1 1" $bppctl
+      sed -i "6 c #\$ -o $basedir/output/diploidoption" $submit
+      sed -i "7 c #\$ -e $basedir/error/diploidoption" $submit
+    elif [ "$method" = "PHASED" ]
+    then
+      sed -i "10 c 2 2 2 2 2 2 2 2" $bppctl
+      sed -i "12 c diploid = 0 0 0 0 0 0 0 0" $bppctl
+      sed -i "6 c #\$ -o $basedir/output/PHASED" $submit
+      sed -i "7 c #\$ -e $basedir/error/PHASED" $submit
     else
-      loci="250L"
-      sed -i "14 c nloci = 250" "$basedir/A01.bpp.ctl"
+      sed -i "10 c 1 1 1 1 1 1 1 1" $bppctl
+      sed -i "12 c diploid = 0 0 0 0 0 0 0 0" $bppctl
+      sed -i "6 c #\$ -o $basedir/output/random" $submit
+      sed -i "7 c #\$ -e $basedir/error/random" $submit
     fi
-    for j in {1..2}
+    for loci in $locilist
     do
-      if (( j == 1 ))
-      then
-        rate="low"
-        sed -i "17 c tauprior = 3 0.008" "$basedir/A01.bpp.ctl"
-      else
-        rate="high"
-        sed -i "17 c tauprior = 3 0.08" "$basedir/A01.bpp.ctl"
-      fi
-      for k in {1..2}
+      sed -i "14 c nloci = $loci" $bppctl
+      for rate in {"low","high"}
       do
-        if (( k == 1 ))
+        if [ "$rate" = "low" ]
         then
-          num="1"
+          sed -i "17 c tauprior = 3 0.008" $bppctl
+          sed -i "16 c thetaprior = 3 0.002 e" $bppctl
         else
-          num="2"
+          sed -i "17 c tauprior = 3 0.08" $bppctl
+          sed -i "16 c thetaprior = 3 0.02 e" $bppctl
         fi
-        for l in {1..3}
+        for repl in {1..100}
         do
-          if (( l == 1 )) && [ $loci = "10L" ]
+          sed -i "1 c seed = $RANDOM" $bppctl
+          if [ "$method" = "PHASED" ] || [ "$method" = "random" ]
           then
-            iter="75"
-            sed -i "22 c nsample = 75000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 7500" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 )) && [ $loci = "10L" ]
-          then
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          elif (( l == 3 )) && [ $loci = "10L" ]
-          then
-            iter="500"
-            sed -i "22 c nsample = 500000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 50000" "$basedir/A01.bpp.ctl"
-          elif (( l == 1 ))
-          then
-            iter="30"
-            sed -i "22 c nsample = 30000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 3000" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 ))
-          then
-            iter="80"
-            sed -i "22 c nsample = 80000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 8000" "$basedir/A01.bpp.ctl"
+            sed -i "2 c seqfile = $basedir/$tree/$method/${loci}L/$rate/$repl/$tree-$method-${loci}L-$rate-$repl-phased.phy" $bppctl
           else
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
+            sed -i "2 c seqfile = $basedir/$tree/$method/${loci}L/$rate/$repl/$tree-$method-${loci}L-$rate-$repl.phy" $bppctl
           fi
-          bppctlfiledest="$basedir/$method/$loci/$rate/$num/$iter"
-          sed -i "1 c seed = $RANDOM" "$basedir/A01.bpp.ctl"
-          sed -i "2 c seqfile = $bppctlfiledest/$loci-$rate-$num.phy" "$basedir/A01.bpp.ctl"
-          sed -i "3 c Imapfile = $bppctlfiledest/Imap.txt" "$basedir/A01.bpp.ctl"
-          sed -i "4 c outfile = $bppctlfiledest/$loci-$rate-$num-$iter-out.txt" "$basedir/A01.bpp.ctl"
-          sed -i "5 c mcmcfile = $bppctlfiledest/$loci-$rate-$num-$iter-mcmc.txt" "$basedir/A01.bpp.ctl"
-          cp "$basedir/A01.bpp.ctl" "$bppctlfiledest/A01.bpp.ctl"
-          sed -i "10 c $bppdir/bpp.exe --cfile $bppctlfiledest/A01.bpp.ctl" run.txt
-          sed -i "9 c echo \$SECONDS > $bppctlfiledest/timeelapsed.txt" run.txt
-          sed -i "11 c echo \$SECONDS >> $bppctlfiledest/timeelapsed.txt" run.txt
-          cp "$basedir/run.txt" "$bppctlfiledest/run.txt"
-          qsub "$bppctlfiledest/run.txt"
+          if [ "$method" = "PHASED" ]
+          then
+            sed -i "3 c Imapfile = $basedir/$scripts/ImapPHASE.txt" $bppctl
+          else
+            sed -i "3 c Imapfile = $basedir/$scripts/Imap.txt" $bppctl
+          cp "$scripts/A01.bpp.ctl" "$tree/$method/${loci}L/$rate/$repl/A01.bpp.ctl"
+          fi
+        done
+        for qsub in {10,20,30,40,50,60,70,80,90,100}
+        do
+          wd="$basedir/$tree/$method/${loci}L/$rate"
+          sed -i "5 c #\$ -wd $wd" $submit
+          start=$(( $qsub - 9 ))
+          sed -i "9 c for i in {$start..$qsub}" $submit
+          sed -i "11 c \ \ $bppprogram --cfile $wd/\$i/A01.bpp.ctl > \$i/log.txt" $submit
+          qsub $submit
+          sleep 2
         done
       done
     done
   done
-elif [ "$1" = "PHASE" ]
-then
-  method="PHASED"
-  echo "Resolving phase using PHASE method"
-  sed -i "10 c 2 2 2 2 2 2 2 2" "$basedir/A01.bpp.ctl"
-  sed -i "12 c diploid = 0 0 0 0 0 0 0 0" "$basedir/A01.bpp.ctl"
-  sed -i "7 c \#$ -o $basedir/output/PHASED" run.txt
-  sed -i "6 c \#$ -e $basedir/error/PHASED" run.txt
-  for i in {1..3}
-  do
-    if (( i == 1 ))
-    then
-      loci="10L"
-      sed -i "14 c nloci = 10" "$basedir/A01.bpp.ctl"
-    elif (( $i == 2 ))
-    then
-      loci="50L"
-      sed -i "14 c nloci = 50" "$basedir/A01.bpp.ctl"
-    else
-      loci="250L"
-      sed -i "14 c nloci = 250" "$basedir/A01.bpp.ctl"
-    fi
-    for j in {1..2}
-    do
-      if (( j == 1 ))
-      then
-        rate="low"
-        sed -i "17 c tauprior = 3 0.008" "$basedir/A01.bpp.ctl"
-      else
-        rate="high"
-        sed -i "17 c tauprior = 3 0.08" "$basedir/A01.bpp.ctl"
-      fi
-      for k in {1..2}
-      do
-        if (( k == 1 ))
-        then
-          num="1"
-        else
-          num="2"
-        fi
-        for l in {1..3}
-        do
-          if (( l == 1 )) && [ $loci = "10L" ]
-          then
-            iter="75"
-            sed -i "22 c nsample = 75000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 7500" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 )) && [ $loci = "10L" ]
-          then
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          elif (( l == 3 )) && [ $loci = "10L" ]
-          then
-            iter="500"
-            sed -i "22 c nsample = 500000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 50000" "$basedir/A01.bpp.ctl"
-          elif (( l == 1 ))
-          then
-            iter="30"
-            sed -i "22 c nsample = 30000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 3000" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 ))
-          then
-            iter="80"
-            sed -i "22 c nsample = 80000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 8000" "$basedir/A01.bpp.ctl"
-          else
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          fi
-          bppctlfiledest="$basedir/$method/$loci/$rate/$num/$iter"
-          sed -i "1 c seed = $RANDOM" "$basedir/A01.bpp.ctl"
-          sed -i "2 c seqfile = $bppctlfiledest/$loci-$rate-$num-phased.phy" "$basedir/A01.bpp.ctl"
-          sed -i "3 c Imapfile = $basedir/scripts/qsub/ImapPHASE.txt" "$basedir/A01.bpp.ctl"
-          sed -i "4 c outfile = $bppctlfiledest/$loci-$rate-$num-$iter-out.txt" "$basedir/A01.bpp.ctl"
-          sed -i "5 c mcmcfile = $bppctlfiledest/$loci-$rate-$num-$iter-mcmc.txt" "$basedir/A01.bpp.ctl"
-          cp "$basedir/A01.bpp.ctl" "$bppctlfiledest/A01.bpp.ctl"
-          sed -i "10 c $bppdir/bpp.exe --cfile $bppctlfiledest/A01.bpp.ctl" run.txt
-          sed -i "9 c echo \$SECONDS > $bppctlfiledest/timeelapsed.txt" run.txt
-          sed -i "11 c echo \$SECONDS >> $bppctlfiledest/timeelapsed.txt" run.txt
-          cp "$basedir/run.txt" "$bppctlfiledest/run.txt"
-          qsub "$bppctlfiledest/run.txt"
-        done
-      done
-    done
-  done
-elif [ "$1" = "diploidoption" ]
-then
-  method="diploidoption"
-  echo "Resolving phase using diploid option"
-  sed -i "10 c 1 1 1 1 1 1 1 1" "$basedir/A01.bpp.ctl"
-  sed -i "12 c diploid = 1 1 1 1 1 1 1 1" "$basedir/A01.bpp.ctl"
-  sed -i "6 c \#$ -o $basedir/output/diploidoption" run.txt
-  sed -i "7 c \#$ -e $basedir/error/diploidoption" run.txt
-  for i in {1..3}
-  do
-    if (( i == 1 ))
-    then
-      loci="10L"
-      sed -i "14 c nloci = 10" "$basedir/A01.bpp.ctl"
-    elif (( $i == 2 ))
-    then
-      loci="50L"
-      sed -i "14 c nloci = 50" "$basedir/A01.bpp.ctl"
-    else
-      loci="250L"
-      sed -i "14 c nloci = 250" "$basedir/A01.bpp.ctl"
-    fi
-    for j in {1..2}
-    do
-      if (( j == 1 ))
-      then
-        rate="low"
-        sed -i "17 c tauprior = 3 0.008" "$basedir/A01.bpp.ctl"
-      else
-        rate="high"
-        sed -i "17 c tauprior = 3 0.08" "$basedir/A01.bpp.ctl"
-      fi
-      for k in {1..2}
-      do
-        if (( k == 1 ))
-        then
-          num="1"
-        else
-          num="2"
-        fi
-        for l in {1..3}
-        do
-          if (( l == 1 )) && [ $loci = "10L" ]
-          then
-            iter="75"
-            sed -i "22 c nsample = 75000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 7500" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 )) && [ $loci = "10L" ]
-          then
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          elif (( l == 3 )) && [ $loci = "10L" ]
-          then
-            iter="500"
-            sed -i "22 c nsample = 500000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 50000" "$basedir/A01.bpp.ctl"
-          elif (( l == 1 ))
-          then
-            iter="30"
-            sed -i "22 c nsample = 30000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 3000" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 ))
-          then
-            iter="80"
-            sed -i "22 c nsample = 80000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 8000" "$basedir/A01.bpp.ctl"
-          else
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          fi
-          bppctlfiledest="$basedir/$method/$loci/$rate/$num/$iter"
-          sed -i "1 c seed = $RANDOM" "$basedir/A01.bpp.ctl"
-          sed -i "2 c seqfile = $bppctlfiledest/$loci-$rate-$num.phy" "$basedir/A01.bpp.ctl"
-          sed -i "3 c Imapfile = $bppctlfiledest/Imap.txt" "$basedir/A01.bpp.ctl"
-          sed -i "4 c outfile = $bppctlfiledest/$loci-$rate-$num-$iter-out.txt" "$basedir/A01.bpp.ctl"
-          sed -i "5 c mcmcfile = $bppctlfiledest/$loci-$rate-$num-$iter-mcmc.txt" "$basedir/A01.bpp.ctl"
-          cp "$basedir/A01.bpp.ctl" "$bppctlfiledest/A01.bpp.ctl"
-          sed -i "10 c $bppdir/bpp.exe --cfile $bppctlfiledest/A01.bpp.ctl" run.txt
-          sed -i "9 c echo \$SECONDS > $bppctlfiledest/timeelapsed.txt" run.txt
-          sed -i "11 c echo \$SECONDS >> $bppctlfiledest/timeelapsed.txt" run.txt
-          cp "$basedir/run.txt" "$bppctlfiledest/run.txt"
-          qsub "$bppctlfiledest/run.txt"
-        done
-      done
-    done
-  done
-elif [ "$1" = "random" ]
-then
-  method="random"
-  echo "Resolving phase randomly as in haploid consensus sequence"
-  sed -i "10 c 1 1 1 1 1 1 1 1" "$basedir/A01.bpp.ctl"
-  sed -i "12 c diploid = 0 0 0 0 0 0 0 0" "$basedir/A01.bpp.ctl"
-  sed -i "6 c \#$ -o $basedir/output/random" run.txt
-  sed -i "7 c \#$ -e $basedir/error/random" run.txt
-  for i in {1..3}
-  do
-    if (( i == 1 ))
-    then
-      loci="10L"
-      sed -i "14 c nloci = 10" "$basedir/A01.bpp.ctl"
-    elif (( $i == 2 ))
-    then
-      loci="50L"
-      sed -i "14 c nloci = 50" "$basedir/A01.bpp.ctl"
-    else
-      loci="250L"
-      sed -i "14 c nloci = 250" "$basedir/A01.bpp.ctl"
-    fi
-    for j in {1..2}
-    do
-      if (( j == 1 ))
-      then
-        rate="low"
-        sed -i "17 c tauprior = 3 0.008" "$basedir/A01.bpp.ctl"
-      else
-        rate="high"
-        sed -i "17 c tauprior = 3 0.08" "$basedir/A01.bpp.ctl"
-      fi
-      for k in {1..2}
-      do
-        if (( k == 1 ))
-        then
-          num="1"
-        else
-          num="2"
-        fi
-        for l in {1..3}
-        do
-          if (( l == 1 )) && [ $loci = "10L" ]
-          then
-            iter="75"
-            sed -i "22 c nsample = 75000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 7500" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 )) && [ $loci = "10L" ]
-          then
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          elif (( l == 3 )) && [ $loci = "10L" ]
-          then
-            iter="500"
-            sed -i "22 c nsample = 500000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 50000" "$basedir/A01.bpp.ctl"
-          elif (( l == 1 ))
-          then
-            iter="30"
-            sed -i "22 c nsample = 30000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 3000" "$basedir/A01.bpp.ctl"
-          elif (( l == 2 ))
-          then
-            iter="80"
-            sed -i "22 c nsample = 80000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 8000" "$basedir/A01.bpp.ctl"
-          else
-            iter="200"
-            sed -i "22 c nsample = 200000" "$basedir/A01.bpp.ctl"
-            sed -i "20 c burnin = 20000" "$basedir/A01.bpp.ctl"
-          fi
-          bppctlfiledest="$basedir/$method/$loci/$rate/$num/$iter"
-          sed -i "1 c seed = $RANDOM" "$basedir/A01.bpp.ctl"
-          sed -i "2 c seqfile = $bppctlfiledest/$loci-$rate-$num-phased.phy" "$basedir/A01.bpp.ctl"
-          sed -i "3 c Imapfile = $bppctlfiledest/Imap.txt" "$basedir/A01.bpp.ctl"
-          sed -i "4 c outfile = $bppctlfiledest/$loci-$rate-$num-$iter-out.txt" "$basedir/A01.bpp.ctl"
-          sed -i "5 c mcmcfile = $bppctlfiledest/$loci-$rate-$num-$iter-mcmc.txt" "$basedir/A01.bpp.ctl"
-          cp "$basedir/A01.bpp.ctl" "$bppctlfiledest/A01.bpp.ctl"
-          sed -i "10 c $bppdir/bpp.exe --cfile $bppctlfiledest/A01.bpp.ctl" run.txt
-          sed -i "9 c echo \$SECONDS > $bppctlfiledest/timeelapsed.txt" run.txt
-          sed -i "11 c echo \$SECONDS >> $bppctlfiledest/timeelapsed.txt" run.txt
-          cp "$basedir/run.txt" "$bppctlfiledest/run.txt"
-          qsub "$bppctlfiledest/run.txt"
-        done
-      done
-    done
-  done
-rm run.txt
-rm A01.bpp.ctl
-else
-  echo "####Program for estimating the phase resolution of diploid heterozygous data####"
-  echo '!!!Make sure to change "bppdir=" and "basedir=" in file to the correct locations before running!!!'
-  echo '###Options are "diploidoption" "PHASE" "fulldata" and "random"###'
-  echo "##diploidoption: bpp's built-in method for phase resolution##"
-  echo "##PHASE: a population genetics method for resolving phase by Matthew Stephens##"
-  echo "##fulldata: for estimating the posterior when the full diploid data is available, useful for comparing methods##"
-fi
+done
