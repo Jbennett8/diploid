@@ -21,7 +21,7 @@ else
   while [ $counter -lt ${#array[@]} ]
   do
     argument=${array[$counter]}
-    if [ "$i" = "-l" ]
+    if [ "$argument" = "-l" ]
     then
       (( counter++ ))
       locistr=${array[$counter]}
@@ -123,6 +123,7 @@ do
             start=$(( $qsub - 9 ))
             sed -i "9 c for i in {$start..$qsub}" $submit
             sed -i "11 c \ \ $bppprogram --cfile $wd/\$i/A01.bpp.ctl > \$i/log.txt" $submit
+            sed -i "8 c #$ -N $tree.$method.${loci}L.$rate.$start-$qsub" $submit
             qsub $submit
             sleep 2
           done

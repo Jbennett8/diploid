@@ -16,6 +16,12 @@ for i in range(len(sys.argv)):
   if (sys.argv[i] == '-l'):
     locilist = sys.argv[i+1]
 
+if len(sys.argv) == 1:
+  print("No options specified, checking default loci and methods for completed analyses")
+
+print("Loci specified %s" % locilist)
+print("Methods specified %s" % methodlist)
+
 for tree in "U B".split():
   for method in methodlist.split(","):
     for loci in locilist.split(","):
