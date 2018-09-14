@@ -21,30 +21,50 @@ then
   echo "No options specified, default loci and methods assumed"
 else
   array=( "$@" )
-  for ((i=0;i<=$#;i++))
+  counter=0
+  while [ $counter -lt ${#array[@]} ]
   do
-    if [ "${array[$i]}" = "-l" ]
+    argument=${array[$counter]}
+    if [ "$i" = "-l" ]
     then
-      next=$(( $i+1 ))
-      locistr=${array[$next]}
-    elif [ "${array[$i]}" = "-m" ]
+      (( counter++ ))
+      locistr=${array[$counter]}
+      echo "Loci configuration accepted"
+    elif [ "$argument" = "-m" ]
     then
-      next=$(( $i+1 ))
-      methodstr=${array[$next]}
+      (( counter++ ))
+      methodstr=${array[$counter]}
+      echo "Methods option accepted"
     else
-      echo "Options accepted: -l <locilist> -m <methodlist>"
+      echo "Options accepted: -l <comma-separated locilist> -m <comma-separated methodlist> --fast"
       exit 1
     fi
+    (( counter++ ))
   done
 fi
-
 echo "Chose methods $methodstr to investigate"
 echo "Chose $locistr loci to generate"
 
 #Make directories
 echo "Creating directories based on options selected"
 locistr2=$(echo $locistr | sed 's/\([0-9]\+\)/\1L/g')
-eval mkdir -p {U,B}/{$methodstr}/{$locistr2}/{high,low}/{1..100}
+
+if [ "$#" = "2" ] #If only one option was specified
+then
+  flag=${array[0]}
+  argument1=${array[1]}
+  if [ "$flag" = "-m" ]
+  then
+    methodstr="$argument1"
+    mkdir -p {U,B}/$methodstr/{10L,50L,250L}/{high,low}/{1..100}
+  elif [ "$flag" = "-l" ]
+  then
+    locistr="$argument1"
+    mkdir -p {U,B}/{fulldata,diploidoption,PHASED,random}/$locistr/{high,low}/{1..100}
+  fi
+else #If two options or defaults options specified
+  eval mkdir -p {U,B}/{$methodstr}/{$locistr2}/{high,low}/{1..100}
+fi
 
 #Make error and output directories for job debugging
 mkdir -p {error,output}/{fulldata,diploidoption,PHASED,random,resubmit}
