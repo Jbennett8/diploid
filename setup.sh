@@ -46,7 +46,8 @@ echo "Creating directories based on options selected"
 locistr2=$(echo $locistr | sed 's/\([0-9]\+\)/\1L/g')
 eval mkdir -p {U,B}/{$methodstr}/{$locistr2}/{high,low}/{1..100}
 
-
+#Make error and output directories for job debugging
+mkdir -p {error,output}/{fulldata,diploidoption,PHASED,random,resubmit}
 
 #Populate with MCcoal data
 methodlist=$(echo $methodstr | sed 's/,/ /g')
