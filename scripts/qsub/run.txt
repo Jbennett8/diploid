@@ -1,13 +1,13 @@
 #$ -S /bin/bash
-#$ -l h_vmem=4G
-#$ -l h_rt=30:0:0
-#$ -l tmem=4G
-#$ -wd /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/random/250L/high
-#$ -o /SAN/yanglab/abacus/jeremy/git/diploid/newscript/output/random
-#$ -e /SAN/yanglab/abacus/jeremy/git/diploid/newscript/error/random
+#$ -l h_vmem=8G
+#$ -l h_rt=80:0:0
+#$ -l tmem=8G
+#$ -wd /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/50L/high
+#$ -o /SAN/yanglab/abacus/jeremy/git/diploid/newscript/output/PHASED
+#$ -e /SAN/yanglab/abacus/jeremy/git/diploid/newscript/error/PHASED
 
 for i in {91..100}
 do
-  /SAN/yanglab/abacus/jeremy/bpp4.0/bpp.exe --cfile /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/random/250L/high/$i/A01.bpp.ctl > $i/log.txt
+  /SAN/yanglab/abacus/jeremy/bpp4.0/bpp.exe --cfile /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/50L/high/$i/A01.bpp.ctl > $i/log.txt
 done
 

@@ -7,27 +7,35 @@
 
 #For use in diploid comparison study
 #Creates the directories specified by options given and populates them with simulated MCcoal data
-#Options: ./setup.sh -l <locilist>
-#Example to create datasets with 50,100,200 loci: ./setup.sh -l 50,100,200
+#Options: ./setup.sh -l <locilist> -m <methodlist>
+#Example to create datasets with 50,100,200 loci and default methods: ./setup.sh -l 50,100,200
 
 MCcoalctl=scripts/setup/MCcoal.ctl
 MCcoalexe=scripts/setup/MCcoal.exe
 
+locistr="10,50,250"
+methodstr="fulldata,diploidoption,PHASED,random"
 
-if [ "$1" = "-l" ]
+if [ "$#" = "0" ]
 then
-  locistr=$2
+  echo "No options specified, default loci and methods assumed"
 else
-  locistr="10,50,250"
-  echo "No loci option specified, default assumed"
-fi
-
-if [ "$3" = "-m" ]
-then
-  methodstr=$4
-else
-  methodstr="fulldata,diploidoption,PHASED,random"
-  echo "No method option specified, default assumed"
+  array=( "$@" )
+  for ((i=0;i<=$#;i++))
+  do
+    if [ "${array[$i]}" = "-l" ]
+    then
+      next=$(( $i+1 ))
+      locistr=${array[$next]}
+    elif [ "${array[$i]}" = "-m" ]
+    then
+      next=$(( $i+1 ))
+      methodstr=${array[$next]}
+    else
+      echo "Options accepted: -l <locilist> -m <methodlist>"
+      exit 1
+    fi
+  done
 fi
 
 echo "Chose methods $methodstr to investigate"

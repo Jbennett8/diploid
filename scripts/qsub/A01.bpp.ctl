@@ -1,13 +1,13 @@
-seed = 29868
-seqfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/random/250L/high/100/B-random-250L-high-100-phased.phy
-Imapfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/scripts/qsub/Imap.txt
-outfile = out.txt
-mcmcfile = mcmc.txt
+seed = 330
+seqfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/250L/high/100/B-PHASED-250L-high-100-phased.phy
+Imapfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/scripts/qsub/ImapPHASE.txt
+outfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/250L/high/100/out.txt
+mcmcfile = /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/250L/high/100/mcmc.txt
 speciesdelimitation = 0
 speciestree = 1 0 0 0
 speciesmodelprior = 1
 species&tree = 8 A B C D E F G H
-1 1 1 1 1 1 1 1
+2 2 2 2 2 2 2 2
 (((((((A, B), C), D), E), F), G), H);
 diploid = 0 0 0 0 0 0 0 0
 usedata = 1

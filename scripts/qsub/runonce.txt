@@ -1,0 +1,10 @@
+#$ -S /bin/bash
+#$ -l h_vmem=10G
+#$ -l h_rt=150:0:0
+#$ -l tmem=10G
+#$ -wd /SAN/yanglab/abacus/jeremy/git/diploid/newscript/B/PHASED/250L/high/100
+#$ -o /SAN/yanglab/abacus/jeremy/git/diploid/newscript/output/PHASED
+#$ -e /SAN/yanglab/abacus/jeremy/git/diploid/newscript/error/PHASED
+#$ -N B.PHASED.250.high.100
+
+/SAN/yanglab/abacus/jeremy/bpp4.0/bpp.exe --cfile A01.bpp.ctl > log.txt
