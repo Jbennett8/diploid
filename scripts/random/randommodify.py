@@ -1,4 +1,9 @@
-#!/usr/bin/python
+#$ -S /usr/bin/python
+#$ -l h_rt=10:0:0
+#$ -l h_vmem=2G
+#$ -l tmem=2G
+#$ -cwd
+#$ -N randomphaseresolution
 
 import subprocess
 
